@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 
 class InvalidMoneyError(ValueError):
@@ -20,14 +20,14 @@ class Money:
             raise InvalidMoneyError("amount cannot be negative")
 
     @classmethod
-    def from_text(cls, value: str, currency: str = "USD") -> "Money":
+    def from_text(cls, value: str, currency: str = "USD") -> Money:
         try:
             amount = Decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         except Exception as exc:
             raise InvalidMoneyError("amount must be a valid decimal") from exc
         return cls(amount, currency)
 
-    def add(self, other: "Money") -> "Money":
+    def add(self, other: Money) -> Money:
         if self.currency != other.currency:
             raise InvalidMoneyError("currencies must match")
         return Money(self.amount + other.amount, self.currency)
